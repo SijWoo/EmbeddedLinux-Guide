@@ -40,7 +40,7 @@ With embedded linux, each program I write uses its own virtual address space. Th
 ```
 in two separate programs, it's highly likely dereferencing this register in one process will map to a different physical address than in another process.
 
-One option I found was to create a kernel driver. There are char, block, and network types. This seams like a deep rabbit hole that I currently don't want to deal with so I'll jump into it at a later time.
+One option I found was to create a kernel driver. There are char, block, and network types. This seems like a deep rabbit hole that I currently don't want to deal with so I'll jump into it at a later time.
 
 Other options are calling read/write functions from stdio or call ioctl. Read/write functions only allows half-duplex communication so read and writes cannot be simultaneous. For full-duplex, you need to use ioctl. Ioctl let's you choose your input parameters for freedom of creating your own drivers. Either way, I don't like these options because there's a lot of latency and overhead. As an embedded engineer, it bothers me that the system cannot be truly real-time. For actual pin control, I've decided I can just use the CM4 core with an RTOS.
 
