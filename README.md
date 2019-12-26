@@ -7,7 +7,7 @@ I'll be using NXP's i.MX7ULP (MCIMX7) processor to learn.
 
 There is no structure to this guide. The following sections are in chronological order of what I learn.
 
-**Take this guide with a grain of salt. I'll always make mistakes. If you see any incorrect information, let me know and I can fix it!**
+**Take this guide with a grain of salt. I'll make mistakes. If you see any incorrect information, let me know and I can fix it!**
 
 ## References
 List of sources I used:
