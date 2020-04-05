@@ -53,5 +53,29 @@ For more information on the API on the linux side, look at the Linux documentati
 
 For the RTOS, NXP provided a multicore library. Writing my own RPMsg API will take more time than I'm willing to put.
 
-## How does Linux know which pins are being used if I use the generic SPI device driver
-There are generic IO device drivers that let's us use a peripheral and create our own application specific drivers.
+## Controlling GPIO pins in user space
+All things in Linux are represented as files. The directory to interface with hardware is in `/sys/class/`. There is a gpio directory that is filled with `gpiochip*` folders. The gpio pins are grouped into banks which are the gpipchips.
+
+First we need to find the pin number. For the i.MX processor, GPIO pins are defined with a bank number and a IO number (GPIO0_IO10 or PTF10). You can find which pins are connected on the Arduino pinouts in the schematics of the EVK. I'm testing it with PTF10 which is D8 in Arduino pin naming standards.
+Bank F is corresponds to number 5 (0-indexed). The pin number calculated with
+```
+N = (port - 1) * 32
+```
+Therefore PTF10 corresponds to N = (6 - 1) * 32 = 160.
+
+Next we need to export the file from the kernel space. There is an `export` file within `/sys/class/gpio/` that you need to write the pin number to. The following command can be used:
+```Bash
+echo 160 > /sys/class/gpio/export
+```
+You should see a new directory named gpioN; in our case, the directory is called `gpio160`.
+
+The contents of `gpio160` should look like the following:
+```
+active_low  device  direction  power  subsystem  uevent  value
+```
+
+By default the pins are configured as inputs. Writing out to the `direction` file will make the pin an output. The `value` file will hold either a 0 or 1 if the pin is an input or the file can be written with a 0 or 1 if the pin is an output. The `active_low` file will configure the pin to be postivie or negative logic by wiritng a 0 or 1, respectively.
+
+Writing the pin number to the `/sys/class/gpio/unexport` will remove the gpio pin from the user space.
+
+You can read more about this on page 248 in the `Mastering Embedded Linux Programming` textbook.
