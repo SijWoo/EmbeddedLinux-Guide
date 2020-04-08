@@ -56,20 +56,20 @@ For the RTOS, NXP provided a multicore library. Writing my own RPMsg API will ta
 ## Controlling GPIO pins in user space
 All things in Linux are represented as files. The directory to interface with hardware is in `/sys/class/`. There is a gpio directory that is filled with `gpiochip*` folders. The gpio pins are grouped into banks which are the gpipchips.
 
-First we need to find the pin number. For the i.MX processor, GPIO pins are defined with a bank number and a IO number (GPIO0_IO10 or PTF10). You can find which pins are connected on the Arduino pinouts in the schematics of the EVK. I'm testing it with PTF10 which is D8 in Arduino pin naming standards.
-Bank F is corresponds to number 5 (0-indexed). The pin number calculated with
+First we need to find the pin number. For the i.MX processor, GPIO pins are defined with a bank number and a IO number (GPIO0_IO10 or PTF10). You can find which pins are connected on the Arduino pinouts in the schematics of the EVK. I'm testing it with PTA14 which is A4 in Arduino pin naming standards.
+Bank A is corresponds to number 1 but the the gpio interface uses 0-indexing. The pin number calculated with
 ```
-N = (port - 1) * 32
+N = (port - 1) * 32 + IO
 ```
-Therefore PTF10 corresponds to N = (6 - 1) * 32 = 160.
+Therefore PTA14 corresponds to N = (1 - 1) * 32 + 14 = 14.
 
 Next we need to export the file from the kernel space. There is an `export` file within `/sys/class/gpio/` that you need to write the pin number to. The following command can be used:
 ```Bash
-echo 160 > /sys/class/gpio/export
+echo 14 > /sys/class/gpio/export
 ```
-You should see a new directory named gpioN; in our case, the directory is called `gpio160`.
+You should see a new directory named gpioN; in our case, the directory is called `gpio14`.
 
-The contents of `gpio160` should look like the following:
+The contents of `gpio14` should look like the following:
 ```
 active_low  device  direction  power  subsystem  uevent  value
 ```
